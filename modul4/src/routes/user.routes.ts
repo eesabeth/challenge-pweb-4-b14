@@ -6,6 +6,7 @@ import {
   getAllUsers,
   getUserById,
   updateUser,
+  getUserPosts,
 } from "../controllers/userController";
 
 const router = Router();
@@ -15,5 +16,6 @@ router.get("/", getAllUsers);
 router.get("/:id", getUserById);
 router.patch("/:id", updateUser);
 router.delete("/:id", deleteUser);
+router.get('/:id/posts', getUserPosts);
 
 export default router;

@@ -118,3 +118,54 @@ export const deletePost = async (req: Request, res: Response) => {
 
   sendSuccess(res, 200, "Post berhasil dihapus");
 };
+
+export const getDailyPostStats = async (req: Request, res: Response) => {
+  try {
+    // Menjalankan raw query PostgreSQL untuk menghitung jumlah post per hari berdasarkan createdAt
+    const stats = await prisma.$queryRaw`
+      SELECT DATE_TRUNC('day', "createdAt") as date, COUNT(*) as count
+      FROM "Post"
+      GROUP BY date
+      ORDER BY date DESC;
+    `;
+
+    // Mengonversi BigInt dari hasil COUNT SQL agar bisa di-serialize ke JSON oleh Express
+    const serializedStats = JSON.parse(
+      JSON.stringify(stats, (key, value) =>
+        typeof value === 'bigint' ? Number(value) : value
+      )
+    );
+
+    res.status(200).json({ status: true, data: serializedStats });
+  } catch (error: any) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+export const bulkCreatePosts = async (req: Request, res: Response) => {
+  try {
+    const postsData = req.body; // Diharapkan berupa array data postingan
+
+    // Validasi sederhana memastikan body yang dikirim adalah array
+    if (!Array.isArray(postsData) || postsData.length === 0) {
+      return res.status(400).json({ 
+        status: false, 
+        message: 'Format data harus berupa array dan tidak boleh kosong.' 
+      });
+    }
+
+    // Menggunakan createMany untuk menyimpan banyak data sekaligus
+    const result = await prisma.post.createMany({
+      data: postsData,
+      skipDuplicates: true, // Opsional: mengabaikan data duplikat jika ada
+    });
+
+    res.status(201).json({ 
+      status: true, 
+      message: `Berhasil menambahkan ${result.count} postingan sekaligus.`,
+      count: result.count 
+    });
+  } catch (error: any) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};

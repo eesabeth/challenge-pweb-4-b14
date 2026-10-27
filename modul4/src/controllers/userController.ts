@@ -91,3 +91,39 @@ export const deleteUser = async (req: Request, res: Response) => {
 
   sendSuccess(res, 200, "User berhasil dihapus");
 };
+
+// Mengambil postingan berdasarkan ID user dengan pagination & filter published
+export const getUserPosts = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { page = '1', limit = '10', published } = req.query;
+
+    const pageNumber = parseInt(page as string, 10);
+    const limitNumber = parseInt(limit as string, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Menyusun kondisi filter
+    const whereClause: any = { authorId: Number(id) };
+    if (published !== undefined) {
+      whereClause.published = published === 'true';
+    }
+
+    const posts = await prisma.post.findMany({
+      where: whereClause,
+      skip: skip,
+      take: limitNumber,
+      include: { 
+        author: { select: { name: true, email: true } } 
+      },
+    });
+
+    res.status(200).json({ 
+      status: true, 
+      page: pageNumber, 
+      limit: limitNumber, 
+      data: posts 
+    });
+  } catch (error: any) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};

@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Belajar Express.js Dasar",
+    "content": "Membangun REST API dengan mudah menggunakan Express.",
+    "published": true,
+    "authorId": 1
+  },
+  {
+    "title": "Tips dan Trik TypeScript",
+    "content": "Memanfaatkan tipe data agar kode lebih aman dan terstruktur.",
+    "published": false,
+    "authorId": 1
+  },
+  {
+    "title": "Tes Bulk",
+    "content": "Memposting sekaligus banyak dalam bentuk array.",
+    "published": false,
+    "authorId": 1
+  }
+]

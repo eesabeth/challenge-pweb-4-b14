@@ -5,6 +5,7 @@ import prisma from "./config/prisma";
 import { errorHandler, notFound } from "./middlewares/error";
 import { logger } from "./middlewares/logger";
 import router from "./routes";
+import commentRoutes from './routes/comment.routes';
 
 const app = express();
 
@@ -12,6 +13,7 @@ const app = express();
 app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api/comments', commentRoutes);
 
 app.get("/", (_req, res) => {
   res.json({

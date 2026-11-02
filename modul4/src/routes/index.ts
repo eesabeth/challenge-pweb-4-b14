@@ -4,6 +4,7 @@ import foodRouter from "./food.routes";
 import postRouter from "./post.routes";
 import userRouter from "./user.routes";
 
+
 const router = Router();
 
 router.use("/food", foodRouter);

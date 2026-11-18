@@ -6,10 +6,12 @@ import { errorHandler, notFound } from "./middlewares/error";
 import { logger } from "./middlewares/logger";
 import router from "./routes";
 import commentRoutes from './routes/comment.routes';
+import cors from "cors";
 
 const app = express();
 
 // Middleware global (urutannya penting!)
+app.use(cors());
 app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
